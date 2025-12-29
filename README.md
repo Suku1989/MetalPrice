@@ -106,3 +106,29 @@ Then set the UI secret:
 
 - The UI refreshes every 10 seconds.
 - Prices are returned as `{baseCurrency} per oz` (computed by inverting the Metals-API rates).
+
+## Production checklist
+
+Use this checklist when setting up a new repo/environment.
+
+### GitHub Secrets (repo → Settings → Secrets and variables → Actions)
+
+- `VITE_API_BASE_URL`: your deployed API base URL (example: `https://<your-app>.azurewebsites.net`)
+- `AZURE_WEBAPP_NAME`: your App Service **resource name** (example: `MetalPrice`)
+- `AZURE_WEBAPP_PUBLISH_PROFILE`: publish profile XML for that exact App Service (Azure Portal → App Service → Get publish profile)
+- Ensure `AZURE_WEBAPP_SLOT_NAME` is **not set** unless you use deployment slots
+
+### Azure App Service App Settings (Azure Portal → App Service → Configuration)
+
+- `METALPRICE_API_KEY`: your MetalpriceAPI key
+- `Cors__AllowedOrigins__0`: your GitHub Pages origin (example: `https://suku1989.github.io`)
+
+### GitHub Pages
+
+- Repo → Settings → Pages → Source: **Deploy from a branch**
+- Branch: `gh-pages` / Folder: `/ (root)`
+
+### Verify
+
+- API: `GET https://<your-app>.azurewebsites.net/api/metals/latest`
+- UI: `https://<your-gh-user>.github.io/MetalPrice/`
