@@ -1,0 +1,6 @@
+@MetalPrice.Api_HostAddress = http://localhost:5080
+
+GET {{MetalPrice.Api_HostAddress}}/api/metals/latest
+Accept: application/json
+
+###
