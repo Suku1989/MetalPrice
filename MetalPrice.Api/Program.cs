@@ -12,13 +12,32 @@ builder.Services.AddOptions<MetalPrice.Api.Options.MetalpriceApiOptions>()
 
 builder.Services.AddHttpClient<MetalPrice.Api.Services.MetalpriceApiClient>();
 
-// Dev-only CORS for the React dev server (Vite default: http://localhost:5173)
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("dev", policy =>
+    options.AddPolicy("ui", policy =>
     {
+        var configuredOrigins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>();
+
+        var origins = (configuredOrigins ?? [])
+            .Where(o => !string.IsNullOrWhiteSpace(o))
+            .Select(o => o.Trim())
+            .ToArray();
+
+        // Only allow localhost by default during development.
+        if (origins.Length == 0 && builder.Environment.IsDevelopment())
+        {
+            origins = ["http://localhost:5173"]; // Vite dev server
+        }
+
+        if (origins.Length > 0)
+        {
+            policy.WithOrigins(origins);
+        }
+
         policy
-            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -30,8 +49,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseCors("dev");
 }
+
+app.UseCors("ui");
 
 if (!app.Environment.IsDevelopment())
 {

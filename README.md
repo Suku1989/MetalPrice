@@ -64,6 +64,36 @@ This repo deploys only the React UI to GitHub Pages via GitHub Actions.
 
 Note: GitHub Pages cannot host the ASP.NET Core API. You must deploy the API separately.
 
+## Deploy API to Azure App Service
+
+This repo includes a GitHub Actions workflow that deploys the ASP.NET Core API to Azure App Service:
+
+- Workflow: [.github/workflows/deploy-api-azure.yml](.github/workflows/deploy-api-azure.yml)
+
+### 1) Create Azure resources
+
+In Azure Portal:
+
+- Create an **App Service** (Runtime: `.NET 10` if available; otherwise the closest supported .NET version for App Service).
+
+### 2) Add GitHub Secrets
+
+In GitHub repo → Settings → Secrets and variables → Actions:
+
+- `AZURE_WEBAPP_NAME`: your App Service name (example: `metalprice-api-prod`)
+- `AZURE_WEBAPP_PUBLISH_PROFILE`: download from Azure Portal → App Service → **Get publish profile** (paste the full XML into the secret)
+
+### 3) Configure App Settings in Azure
+
+In Azure Portal → App Service → Configuration → Application settings:
+
+- `METALPRICE_API_KEY`: your MetalpriceAPI key
+- `Cors__AllowedOrigins__0`: your GitHub Pages origin, e.g. `https://suku1989.github.io`
+
+Then set the UI secret:
+
+- GitHub secret `VITE_API_BASE_URL`: `https://<your-app-service-hostname>`
+
 ## Notes
 
 - The UI refreshes every 10 seconds.
