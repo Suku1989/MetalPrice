@@ -59,6 +59,9 @@ The UI calls the API URL from `VITE_API_BASE_URL` (see `MetalPrice.Ui/.env.examp
 This repo deploys only the React UI to GitHub Pages via GitHub Actions.
 
 - Workflow: [.github/workflows/deploy-ui-pages.yml](.github/workflows/deploy-ui-pages.yml)
+- GitHub Pages settings:
+	- GitHub repo → Settings → Pages → Build and deployment → Source: **Deploy from a branch**
+	- Branch: `gh-pages` / Folder: `/ (root)`
 - Set secret: `VITE_API_BASE_URL` to your deployed API base URL (example: `https://your-api-host`) in:
 	- GitHub repo → Settings → Secrets and variables → Actions → New repository secret
 
