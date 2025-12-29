@@ -12,6 +12,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
+      AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
       AZURE_WEBAPP_SLOT_NAME: ${{ secrets.AZURE_WEBAPP_SLOT_NAME }}
     steps:
       - name: Checkout
@@ -30,6 +31,26 @@ jobs:
 
       - name: Publish
         run: dotnet publish MetalPrice.Api/MetalPrice.Api.csproj -c Release --no-build -o ${{ runner.temp }}/publish
+
+      - name: Validate deploy settings
+        shell: bash
+        run: |
+          if [ -z "${AZURE_WEBAPP_NAME}" ]; then
+            echo "ERROR: Missing AZURE_WEBAPP_NAME secret (App Service *resource name*)." >&2
+            exit 1
+          fi
+
+          # AZURE_WEBAPP_NAME must be the App Service resource name, not the hostname.
+          if [[ "${AZURE_WEBAPP_NAME}" == *"azurewebsites.net"* ]]; then
+            echo "ERROR: AZURE_WEBAPP_NAME must be the App Service resource name (e.g. MetalPrice), not the hostname (https://...azurewebsites.net)." >&2
+            exit 1
+          fi
+
+          if [ -z "${AZURE_WEBAPP_SLOT_NAME}" ]; then
+            echo "Deploying to production slot of app: ${AZURE_WEBAPP_NAME}"
+          else
+            echo "Deploying to slot '${AZURE_WEBAPP_SLOT_NAME}' of app: ${AZURE_WEBAPP_NAME}"
+          fi
 
       # Uses Zip Deploy under the hood
       - name: Deploy to Azure Web App (production)
