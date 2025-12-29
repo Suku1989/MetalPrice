@@ -11,6 +11,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      AZURE_WEBAPP_SLOT_NAME: ${{ secrets.AZURE_WEBAPP_SLOT_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +33,7 @@ jobs:
 
       # Uses Zip Deploy under the hood
       - name: Deploy to Azure Web App (production)
-        if: ${{ !secrets.AZURE_WEBAPP_SLOT_NAME }}
+        if: ${{ env.AZURE_WEBAPP_SLOT_NAME == '' }}
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
@@ -39,7 +41,7 @@ jobs:
           package: ${{ runner.temp }}/publish
 
       - name: Deploy to Azure Web App (slot)
-        if: ${{ secrets.AZURE_WEBAPP_SLOT_NAME }}
+        if: ${{ env.AZURE_WEBAPP_SLOT_NAME != '' }}
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}

@@ -6,7 +6,7 @@ ASP.NET Core + React app that displays live gold and silver prices using Metalpr
 
 - .NET SDK 10
 - Node.js + npm
-- A Metals-API key
+- A MetalpriceAPI key
 
 ## Configure MetalpriceAPI key
 
@@ -83,8 +83,13 @@ In Azure Portal:
 
 In GitHub repo → Settings → Secrets and variables → Actions:
 
-- `AZURE_WEBAPP_NAME`: your App Service name (example: `metalprice-api-prod`)
+- `AZURE_WEBAPP_NAME`: your App Service *resource name* (the “Name” shown in Azure Portal → App Service → Overview)
 - `AZURE_WEBAPP_PUBLISH_PROFILE`: download from Azure Portal → App Service → **Get publish profile** (paste the full XML into the secret)
+
+Note: the App Service **resource name** can differ from the **default hostname** (the `https://...azurewebsites.net` URL). Use:
+
+- `AZURE_WEBAPP_NAME` = App Service resource name
+- `VITE_API_BASE_URL` = App Service hostname (base URL)
 
 ### 3) Configure App Settings in Azure
 
